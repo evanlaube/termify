@@ -1,4 +1,4 @@
-from spotifyAuthorizer import SpotifyAuthorizer
+from .spotifyAuthorizer import SpotifyAuthorizer
 
 import requests
 

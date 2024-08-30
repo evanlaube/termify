@@ -1,9 +1,18 @@
 
 from spotifyApi import SpotifyApi
+import curses
 
-def main():
+from ui import UIManager
+
+def main(stdscr):
     api = SpotifyApi()
 
-    api.play()
+    mainMenuItems = [{'type': 'button', 'label': 'Play', 'action': lambda: api.play()},{'type': 'button', 'label': 'Pause', 'action': lambda: api.pause()}]
 
-main()
+    
+    uiManager = UIManager(stdscr, api)
+    uiManager.addMenu('mainMenu', mainMenuItems)
+    uiManager.switchMenu('mainMenu')
+    uiManager.run()
+
+curses.wrapper(main)
