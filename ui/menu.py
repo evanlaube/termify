@@ -5,11 +5,13 @@ import curses
 class Menu:
     def __init__(self, name):
         self.name = name
-        self.elements = []
+        self.elements = {} 
         self.selectedIndex = 0 
 
-    def addElement(self, element):
-        self.elements.append(element)
+    def addElement(self, name, element):
+        if name in self.elements.keys():
+            raise Exception(f"Element with name '{name}' already exists")
+        self.elements[name] = element
 
     def handleInput(self, key):
         if key == curses.KEY_UP or key == ord('k'): 
@@ -21,11 +23,15 @@ class Menu:
                 return
             self.selectedIndex += 1
         elif key == 10: # Enter/Return
-            self.elements[self.selectedIndex].triggerAction()
+            elementKey = list(self.elements)[self.selectedIndex]
+            self.elements[elementKey].triggerAction()
+        elif key == ord('q'):
+            exit()
             
     
     def display(self, stdscr):
         stdscr.clear()
-        for id, element in enumerate(self.elements):
+        for id, key in enumerate(self.elements.keys()):
+            element = self.elements[key]
             selected = (id == self.selectedIndex)
             stdscr.addstr(element.getStr(selected=selected) + '\n')
