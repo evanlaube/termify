@@ -7,7 +7,9 @@ class Button(Element):
         self.action = action
 
     def triggerAction(self):
-        self.action()
+        result = self.action()
+        if result is not None:
+            self.label = result
 
     def getStr(self, selected=False):
         if selected:
