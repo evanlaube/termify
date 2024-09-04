@@ -8,6 +8,15 @@ class UIManager:
         self.menus = {} 
         self.shouldExit = False
 
+        curses.curs_set(0)
+        curses.start_color()
+        curses.use_default_colors()
+        curses.init_pair(1, -1, -1)
+        #curses.init_pair(1, curses.COLOR_RED, -1)
+        self.stdscr.bkgd(' ', curses.color_pair(1))
+        self.stdscr.clear()
+        self.stdscr.refresh()
+
     def run(self):
         self.stdscr.clear()
         self.stdscr.refresh()
@@ -17,25 +26,15 @@ class UIManager:
         try:
             while self.shouldExit == False:
                 if self.currentMenu != None:
+                    self.stdscr.clear()
+                    self.stdscr.refresh()
+                    self.stdscr.move(0,0)
                     self.menus[self.currentMenu].display(self.stdscr)
                 key = self.stdscr.getch()
                 self.menus[self.currentMenu].handleInput(key)
         except KeyboardInterrupt:
             self.shouldExit = False 
 
-
-    #def displayMenu(self, menu):
-    #    self.stdscr.clear()
-    #    elements = self.menus[menu]['items']
-    #    for id, element in enumerate(elements):
-    #        if element['type'] == 'button':
-    #            if id == self.selectedElement:
-    #                self.stdscr.addstr('[*] ')
-    #            else:
-    #                self.stdscr.addstr('[ ] ')
-    #            self.stdscr.addstr(element['label'] + '\n')
-
-                
     def addMenu(self, menu):
         name = menu.name
         self.menus[name] = menu
