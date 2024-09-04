@@ -26,7 +26,7 @@ class SpotifyWrapper:
     def getCurrentSongLabel(self): 
         with self.lock:
             songTitle = self.currentSong['item']['name']
-            album = self.currentSong['item']['name']
+            album = self.currentSong['item']['album']['name']
             artistString = '' 
             for artist in self.currentSong['item']['artists']:
                 if artistString != '':
