@@ -4,19 +4,34 @@ import curses
 
 from ui import UIManager, Button, Menu
 
+def playPauseToggle(api):
+    state = api.getPlaybackState()
+
+    if(state.json()['is_playing']):
+        api.pause()
+        return 'Play'
+    else:
+        api.play()
+        return 'Pause'
+
+def getPlayButtonLabel(api):
+    state = api.getPlaybackState()
+
+    if(state.json()['is_playing']):
+        return 'Pause'
+    else:
+        return 'Play'
+
 def main(stdscr):
     api = SpotifyApi()
 
-    #mainMenuItems = [{'type': 'button', 'label': 'Play', 'action': lambda: api.play()},{'type': 'button', 'label': 'Pause', 'action': lambda: api.pause()}]
-
-    menu = Menu('main')
-    playButton = Button('Play', lambda: api.play())
-    pauseButton = Button('Pause', lambda: api.pause())
-    menu.addElement(playButton)
-    menu.addElement(pauseButton)
+    mainMenu = Menu('main')
+    playButtonLabel = getPlayButtonLabel(api)
+    mainMenu.addElement('playButton', Button(playButtonLabel, lambda: playPauseToggle(api)))
+    mainMenu.addElement('quitButton', Button('Quit', lambda: exit()))
     
     uiManager = UIManager(stdscr, api)
-    uiManager.addMenu(menu)
+    uiManager.addMenu(mainMenu)
     uiManager.switchMenu('main')
     uiManager.run()
 
