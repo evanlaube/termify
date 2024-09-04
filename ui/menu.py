@@ -28,10 +28,13 @@ class Menu:
         elif key == ord('q'):
             exit()
             
+    def update(self):
+        for id, key in enumerate(self.elements.keys()):
+            self.elements[key].update()
     
     def display(self, stdscr):
         stdscr.clear()
         for id, key in enumerate(self.elements.keys()):
             element = self.elements[key]
             selected = (id == self.selectedIndex)
-            stdscr.addstr(element.getStr(selected=selected) + '\n')
+            stdscr.addstr(str(element.getStr(selected=selected)) + '\n')

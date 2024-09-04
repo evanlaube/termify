@@ -75,4 +75,8 @@ class SpotifyApi():
         response = self.makeRequest('GET', '/me/player/devices')
         return response.json()
 
+    def getCurrentSong(self):
+        response = self.makeRequest('GET', '/me/player/currently-playing')
+        return response.json()
+
 

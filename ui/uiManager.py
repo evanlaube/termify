@@ -1,4 +1,5 @@
 import curses
+import time
 
 class UIManager:
     def __init__(self, stdscr, api):
@@ -12,10 +13,10 @@ class UIManager:
         curses.start_color()
         curses.use_default_colors()
         curses.init_pair(1, -1, -1)
-        #curses.init_pair(1, curses.COLOR_RED, -1)
         self.stdscr.bkgd(' ', curses.color_pair(1))
         self.stdscr.clear()
         self.stdscr.refresh()
+        self.stdscr.timeout(1000)
 
     def run(self):
         self.stdscr.clear()
@@ -27,8 +28,7 @@ class UIManager:
             while self.shouldExit == False:
                 if self.currentMenu != None:
                     self.stdscr.clear()
-                    self.stdscr.refresh()
-                    self.stdscr.move(0,0)
+                    self.menus[self.currentMenu].update()
                     self.menus[self.currentMenu].display(self.stdscr)
                 key = self.stdscr.getch()
                 self.menus[self.currentMenu].handleInput(key)

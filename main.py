@@ -1,8 +1,9 @@
 
 from spotifyApi import SpotifyApi
+from spotifyWrapper import SpotifyWrapper
 import curses
 
-from ui import UIManager, Button, Menu
+from ui import UIManager, Button, Menu, Label 
 
 def playPauseToggle(api):
     state = api.getPlaybackState()
@@ -17,16 +18,19 @@ def playPauseToggle(api):
 def getPlayButtonLabel(api):
     state = api.getPlaybackState()
 
-    if(state.json()['is_playing']):
+    if(state.status_code == 200 and state.json()['is_playing']):
         return 'Pause'
     else:
         return 'Play'
 
 def main(stdscr):
     api = SpotifyApi()
+    wrapper = SpotifyWrapper(api)
+    wrapper.start()
 
     mainMenu = Menu('main')
     playButtonLabel = getPlayButtonLabel(api)
+    mainMenu.addElement('labelUpdate', Label(str(wrapper.getCurrentSongLabel()), refreshFunction=lambda: wrapper.getCurrentSongLabel()))
     mainMenu.addElement('playButton', Button(playButtonLabel, lambda: playPauseToggle(api)))
     mainMenu.addElement('quitButton', Button('Quit', lambda: exit()))
     
