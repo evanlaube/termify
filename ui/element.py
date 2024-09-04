@@ -21,4 +21,7 @@ class Element:
 
     def getStr(self, selected=False):
         return self.label
+    
+    def handleInput(self, key):
+        pass
 

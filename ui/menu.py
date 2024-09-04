@@ -1,4 +1,3 @@
-
 import curses
 
 
@@ -14,6 +13,7 @@ class Menu:
         self.elements[name] = element
 
     def handleInput(self, key):
+        elementKey = list(self.elements)[self.selectedIndex]
         if key == curses.KEY_UP or key == ord('k'): 
             if self.selectedIndex <= 0:
                 return
@@ -23,10 +23,12 @@ class Menu:
                 return
             self.selectedIndex += 1
         elif key == 10: # Enter/Return
-            elementKey = list(self.elements)[self.selectedIndex]
             self.elements[elementKey].triggerAction()
         elif key == ord('q'):
             exit()
+        else:
+            self.elements[elementKey].handleInput(key)
+            
             
     def update(self):
         for id, key in enumerate(self.elements.keys()):
@@ -35,6 +37,7 @@ class Menu:
     def display(self, stdscr):
         stdscr.clear()
         for id, key in enumerate(self.elements.keys()):
+            # TODO: Find some way to set color to colors of elements without using init_pair
             element = self.elements[key]
             selected = (id == self.selectedIndex)
             stdscr.addstr(str(element.getStr(selected=selected)) + '\n')
