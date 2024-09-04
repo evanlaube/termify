@@ -30,8 +30,11 @@ def main(stdscr):
 
     mainMenu = Menu('main')
     playButtonLabel = getPlayButtonLabel(api)
+    mainMenu.addElement('titleBar', Label("Termify v0.0.0\n", background=curses.COLOR_BLUE, color=curses.COLOR_WHITE))
     mainMenu.addElement('labelUpdate', Label(str(wrapper.getCurrentSongLabel()), refreshFunction=lambda: wrapper.getCurrentSongLabel()))
-    mainMenu.addElement('playButton', Button(playButtonLabel, lambda: playPauseToggle(api)))
+    mainMenu.addElement('playButton', Button(playButtonLabel, lambda: playPauseToggle(api), setLabelToResult=True))
+    mainMenu.addElement('skipButton', Button('Skip Song', lambda: api.skip()))
+    mainMenu.addElement('prevButton', Button('Previous Song', lambda: api.prev()))
     mainMenu.addElement('quitButton', Button('Quit', lambda: exit()))
     
     uiManager = UIManager(stdscr, api)

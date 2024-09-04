@@ -33,6 +33,6 @@ class SpotifyWrapper:
                     artistString += ', '
                 artistString += artist['name']
 
-            labelString = f'Currently Playing:\n\t{songTitle}\n\t{artistString} - {album}' 
+            labelString = f'Currently Playing:\n\t{songTitle}\n\t{artistString} - {album}\n' 
 
             return labelString 

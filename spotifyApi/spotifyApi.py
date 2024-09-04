@@ -40,10 +40,18 @@ class SpotifyApi():
             self.resetPlayback()
 
         if state.json()['is_playing']:
-            self.pause()
+            return self.pause()
         else:
-            self.play()
+            return self.play()
         pass
+
+    def skip(self):
+        response = self.makeRequest('POST', '/me/player/next')
+        return response
+
+    def prev(self):
+        response = self.makeRequest('POST', '/me/player/previous')
+        return response
     
     def getPlaybackState(self):
         response = self.makeRequest('GET', '/me/player')
