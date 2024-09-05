@@ -25,7 +25,7 @@ class SpotifyAppController:
         state = self.api.getPlaybackState()
 
         if state.status_code == 204:
-            # TODO: Open playback device selector
+            self.selectPlaybackDevice()
             return "Play"
 
         if(state.json()['is_playing']):
@@ -84,7 +84,29 @@ class SpotifyAppController:
         playbackBar = RowBar([playButton, skipButton, prevButton])
         mainMenu.addElement('playbackBar', playbackBar)
 
+        mainMenu.addElement('changeDeviceButton', Button('Change Playback Device', lambda: self.selectPlaybackDevice()))
         mainMenu.addElement('quitButton', Button('Quit', lambda: exit()))
         
         self.uiManager.addMenu(mainMenu)
+
+    def selectPlaybackDevice(self):
+        prevMenu = self.uiManager.currentMenu 
+        selectMenu = Menu('deviceSelect')
+
+        devices = self.api.getDevices()['devices']
+        selectMenu.addElement('prompt', Label('\nChoose a playback device: \n'))
+
+        for device in devices:
+            id = device['id']
+            name = device['name']
+            
+            buttonName = 'select-' + id
+            selectMenu.addElement(buttonName, Button(name, lambda id=id: (self.api.setPlaybackDevice(id), self.uiManager.switchMenu(prevMenu))))
+
+        selectMenu.addElement('deviceTip', Label("\nIf you don't see your device, make sure the Spotify app is running on it"))
+
+        self.uiManager.addMenu(selectMenu)
+        self.uiManager.switchMenu('deviceSelect')
+
+
 
