@@ -10,10 +10,15 @@ import webbrowser
 from dotenv import set_key, get_key
 from time import time
 
-CLIENT_ID = '07974f405e584de8b13f8b32e9c7ea8a'
 REDIRECT_URI = 'http://localhost:8888/callback'
 
 class SpotifyAuthorizer:
+    def __init__(self):
+        self.clientId = get_key('.env', 'TFY_CLIENT_ID')
+
+        if self.clientId == None:
+            raise Exception("Authorization Error: TFY_CLIENT_ID not defined in .env")
+
     def refreshToken(self):
         if get_key('.env', 'TFY_ACCESS_TOKEN') == None:
             self.requestAuth()
@@ -44,7 +49,7 @@ class SpotifyAuthorizer:
     def _getAuthorizationUrl(self, challenge):
         authUrl = (
             f"https://accounts.spotify.com/authorize"
-            f"?client_id={CLIENT_ID}"
+            f"?client_id={self.clientId}"
             f"&response_type=code"
             f"&redirect_uri={REDIRECT_URI}"
             f"&code_challenge_method=S256"
@@ -84,7 +89,7 @@ class SpotifyAuthorizer:
         tokenUrl = 'https://accounts.spotify.com/api/token' 
 
         response = requests.post(tokenUrl, data={
-            'client_id': CLIENT_ID,
+            'client_id': self.clientId,
             'grant_type': 'authorization_code',
             'code': code,
             'redirect_uri': REDIRECT_URI,
@@ -108,7 +113,7 @@ class SpotifyAuthorizer:
         response = requests.post(url, data={
             'grant_type': 'refresh_token',
             'refresh_token': refreshToken,
-            'client_id': CLIENT_ID
+            'client_id': self.clientId 
             })
 
         self._saveToken(response.json())

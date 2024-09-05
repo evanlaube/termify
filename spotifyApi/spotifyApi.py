@@ -2,7 +2,6 @@ from .spotifyAuthorizer import SpotifyAuthorizer
 import requests
 import json
 
-CLIENT_ID = '07974f405e584de8b13f8b32e9c7ea8a'
 
 class SpotifyApi():
     def __init__(self):
