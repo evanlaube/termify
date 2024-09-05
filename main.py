@@ -6,22 +6,21 @@ import curses
 
 from ui import UIManager
 
-def main(stdscr):
-
+def main():
     clientId = get_key('.env', 'TFY_CLIENT_ID')
     
     if clientId == None:
         print("No Client ID found in .env file.")
         id = input("\tEnter your Spotify App Client Id: ")
         set_key('.env', 'TFY_CLIENT_ID', id)
-        curses.wrapper(main)
-        return
+    
+    curses.wrapper(launch)
 
+def launch(stdscr):
     api = SpotifyApi()
     uiManager = UIManager(stdscr, api)
     controller = SpotifyAppController(api, uiManager)
 
     controller.run()
 
-
-main(None)
+main()
