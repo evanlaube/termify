@@ -16,7 +16,7 @@ class UIManager:
         self.stdscr.bkgd(' ', curses.color_pair(1))
         self.stdscr.clear()
         self.stdscr.refresh()
-        self.stdscr.timeout(1000)
+        self.stdscr.timeout(100)
 
     def run(self):
         self.stdscr.clear()

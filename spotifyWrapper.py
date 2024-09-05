@@ -1,12 +1,13 @@
 import threading
 import time
+from math import floor
 
 class SpotifyWrapper:
     def __init__(self, api):
         self.api = api
         self.lock = threading.Lock()
         self.currentSong = {}
-        self.updateInterval = 5 
+        self.updateInterval = 0.2 
 
     def updateSong(self):
         while True:
@@ -33,6 +34,11 @@ class SpotifyWrapper:
                     artistString += ', '
                 artistString += artist['name']
 
-            labelString = f'Currently Playing:\n\t{songTitle}\n\t{artistString} - {album}\n' 
+            songLength = floor(self.currentSong['item']['duration_ms'] / 1000.0)
+            progress = floor(self.currentSong['progress_ms'] / 1000.0)
+            if progress > songLength:
+                progress = songLength
+
+            labelString = f'Currently Playing:\n\t{songTitle}\t({progress//60}:{(progress%60):02d} / {songLength//60}:{(songLength%60):02d})\n\t{artistString} - {album}\n' 
 
             return labelString 
