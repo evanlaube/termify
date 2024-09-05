@@ -38,7 +38,7 @@ class SpotifyApi():
     def togglePlayback(self):
         state = self.getPlaybackState()
         if state.status_code == 204:
-            self.resetPlayback()
+            return None
 
         if state.json()['is_playing']:
             return self.pause()
