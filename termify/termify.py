@@ -1,10 +1,10 @@
 
-from spotifyApi import SpotifyApi
-from spotifyAppController import SpotifyAppController
+from termify.spotifyApi import SpotifyApi
+from termify.spotifyAppController import SpotifyAppController
+from termify.ui import UIManager
 from dotenv import set_key, get_key
 import curses
 
-from ui import UIManager
 
 def main():
     clientId = get_key('.env', 'TFY_CLIENT_ID')

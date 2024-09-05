@@ -1,8 +1,8 @@
 
 import curses
-from playbackMonitor import PlaybackMonitor
-from spotifyApi.spotifyApi import SpotifyApi
-from ui import UIManager, Menu, Button, Label, RowBar
+from termify.playbackMonitor import PlaybackMonitor
+from termify.spotifyApi.spotifyApi import SpotifyApi
+from termify.ui import UIManager, Menu, Button, Label, RowBar
 from math import floor
 
 
@@ -38,17 +38,13 @@ class SpotifyAppController:
     def getPlayButtonLabel(self):
         state = self.api.getPlaybackState()
     
-        if state.status_code == 204:
-            return 'Choose playback device'
-    
         if(state.status_code == 200 and state.json()['is_playing']):
             return 'Pause'
-        else:
-            return 'Play'
+        return 'Play'
 
     def getCurrentSongDisplayLabel(self):
         currentSong = self.monitor.getCurrentSong()
-        if currentSong == None:
+        if currentSong == None or currentSong == {}:
             return "No media currently playing\n"
 
         songTitle = currentSong['item']['name']
