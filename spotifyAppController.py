@@ -103,6 +103,8 @@ class SpotifyAppController:
             buttonName = 'select-' + id
             selectMenu.addElement(buttonName, Button(name, lambda id=id: (self.api.setPlaybackDevice(id), self.uiManager.switchMenu(prevMenu))))
 
+        selectMenu.addElement('newLine', Label(''))
+        selectMenu.addElement('cancelButton', Button('Cancel', lambda: self.uiManager.switchMenu(prevMenu)))
         selectMenu.addElement('deviceTip', Label("\nIf you don't see your device, make sure the Spotify app is running on it"))
 
         self.uiManager.addMenu(selectMenu)
