@@ -12,18 +12,17 @@ class PlaybackMonitor:
     def run(self):
         while True:
             with self.lock:
-                self.currentSong = self.fetchCurrentSong()
+                self.fetchCurrentSong()
             time.sleep(self.updateInterval)
 
     def fetchCurrentSong(self):
         self.currentSong = self.api.getCurrentSong()
+        return self.currentSong
 
     def start(self):
         thread = threading.Thread(target=self.run, daemon=True)
         thread.start()
 
     def getCurrentSong(self):
-        currentSong = None
         with self.lock:
-            currentSong = self.currentSong
-        return currentSong
+            return self.currentSong
