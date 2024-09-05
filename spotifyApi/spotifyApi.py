@@ -29,10 +29,11 @@ class SpotifyApi():
         return response
 
     def play(self):
-        self.makeRequest('PUT', '/me/player/play')
+        return self.makeRequest('PUT', '/me/player/play')
+
 
     def pause(self):
-        self.makeRequest('PUT', '/me/player/pause')
+        return self.makeRequest('PUT', '/me/player/pause')
 
     def togglePlayback(self):
         state = self.getPlaybackState()
@@ -43,22 +44,22 @@ class SpotifyApi():
             return self.pause()
         else:
             return self.play()
-        pass
 
     def skip(self):
-        response = self.makeRequest('POST', '/me/player/next')
-        return response
+        return self.makeRequest('POST', '/me/player/next')
 
     def prev(self):
-        response = self.makeRequest('POST', '/me/player/previous')
-        return response
+        return self.makeRequest('POST', '/me/player/previous')
     
     def getPlaybackState(self):
-        response = self.makeRequest('GET', '/me/player')
-        return response
+        return self.makeRequest('GET', '/me/player')
 
     def resetPlayback(self):
         devices = self.getDevices()
+
+        if devices == None:
+            return False
+
         id = None
         for device in devices['devices']:
             if device['is_active']:
@@ -80,11 +81,17 @@ class SpotifyApi():
             return False 
         
     def getDevices(self):
-        response = self.makeRequest('GET', '/me/player/devices')
-        return response.json()
+        try:
+            response = self.makeRequest('GET', '/me/player/devices')
+            return response.json()
+        except:
+            return None
 
     def getCurrentSong(self):
-        response = self.makeRequest('GET', '/me/player/currently-playing')
-        return response.json()
+        try:
+            response = self.makeRequest('GET', '/me/player/currently-playing')
+            return response.json()
+        except:
+            return None 
 
 
