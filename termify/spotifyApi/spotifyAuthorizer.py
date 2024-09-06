@@ -9,24 +9,27 @@ import urllib.parse as urlparse
 import webbrowser
 from dotenv import set_key, get_key
 from time import time
+import os
+from pathlib import Path
 
 REDIRECT_URI = 'http://localhost:8888/callback'
+envPath = Path(os.getenv('TERMIFY_ENV_PATH', Path.home() / '.termify' / '.env'))
 
 class SpotifyAuthorizer:
     def __init__(self):
-        self.clientId = get_key('.env', 'TFY_CLIENT_ID')
+        self.clientId = get_key(envPath, 'TFY_CLIENT_ID')
 
         if self.clientId == None:
-            raise Exception("Authorization Error: TFY_CLIENT_ID not defined in .env")
+            raise Exception("Authorization Error: TFY_CLIENT_ID not defined in" + str(envPath))
 
     def refreshToken(self):
-        if get_key('.env', 'TFY_ACCESS_TOKEN') == None:
+        if get_key(envPath, 'TFY_ACCESS_TOKEN') == None:
             self.requestAuth()
         else:
             if self.tokenExpired():
                 self._refreshAccessToken()
 
-        self.token = get_key('.env', 'TFY_ACCESS_TOKEN')
+        self.token = get_key(envPath, 'TFY_ACCESS_TOKEN')
 
     def requestAuth(self):
             secret = self._genPkceCodeVerifier()
@@ -103,7 +106,7 @@ class SpotifyAuthorizer:
             raise Exception("Unable to convert auth code into access token - Response:", response.status_code)
         
     def _refreshAccessToken(self):
-        refreshToken = get_key('.env', 'TFY_REFRESH_TOKEN')
+        refreshToken = get_key(envPath, 'TFY_REFRESH_TOKEN')
 
         if refreshToken == None:
             self.requestAuth()
@@ -127,13 +130,13 @@ class SpotifyAuthorizer:
 
         expirationTime = currentTime + lifetime
 
-        set_key('.env', "TFY_ACCESS_TOKEN", token)
-        set_key('.env', "TFY_REFRESH_TOKEN", refreshToken)
-        set_key('.env', "TFY_TOKEN_EXPIRATION", str(expirationTime))
+        set_key(envPath, "TFY_ACCESS_TOKEN", token)
+        set_key(envPath, "TFY_REFRESH_TOKEN", refreshToken)
+        set_key(envPath, "TFY_TOKEN_EXPIRATION", str(expirationTime))
     
     def tokenExpired(self):
         try:
-           expirationTime = get_key('.env', 'TFY_TOKEN_EXPIRATION')
+           expirationTime = get_key(envPath, 'TFY_TOKEN_EXPIRATION')
            assert(expirationTime != None)
            expirationTime = int(expirationTime)
            currentTime = int(time())
@@ -143,5 +146,5 @@ class SpotifyAuthorizer:
 
 
     def getToken(self):
-        return get_key('.env', 'TFY_ACCESS_TOKEN')
+        return get_key(envPath, 'TFY_ACCESS_TOKEN')
 

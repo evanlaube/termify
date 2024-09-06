@@ -17,7 +17,7 @@ setup(
             ],
         entry_points={
             'console_scripts': [
-                'termify=termify.termify:main',
+                'termify=termify.__main__:main',
                 ],
             },
 
