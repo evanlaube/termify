@@ -22,7 +22,7 @@ Termify is a terminal-based application for controlling Spotify from the command
 - `requests` library
 - `dotenv` library
 
-#### Create a Virtual Environment (Optional but reccomended)
+#### Create a Virtual Environment (Optional but recommended)
 This step can be safely skipped if you are already using a default virtual Environment.
 ```bash
 python -m venv venv
