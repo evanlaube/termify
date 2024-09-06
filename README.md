@@ -54,7 +54,7 @@ termify
 Navigate through menus using arrow keys or `Vim` style keys (h, j, k, l)
 
 ## Versioning
-- **Stable Versions**: Available on [PyPI](https://pypi.org). Install the latest stable version using `pip install termify`
+- **Stable Versions**: Available on [PyPI](https://pypi.org/project/termify-py/). Install the latest stable version using `pip install termify-py`
 - **Unstable Versions**: If you want to try the latest features or development version, you can install directly from source using `pip install .` after cloning the repository. Be aware that this version may have new features or bugs not present in the stable release.
 
 ## Contributing
