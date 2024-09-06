@@ -3,6 +3,10 @@
 
 Termify is a terminal-based application for controlling Spotify from the command line. With a simple and intuitive CLI, you can manage playback, view track details, and control your Spotify music without leaving the terminal.
 
+<p align="center">
+  <img src="https://github.com/evanlaube/termify/blob/main/assets/readme/demo.gif" alt="Demo of basic usage of termify"/>
+</p>
+
 ## Features
 - **Playback control**: Play, pause, skip, and change playback device
 
