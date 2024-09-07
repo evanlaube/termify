@@ -3,6 +3,10 @@
 
 Termify is a terminal-based application for controlling Spotify from the command line. With a simple and intuitive CLI, you can manage playback, view track details, and control your Spotify music without leaving the terminal.
 
+<p align="center">
+  <img src="https://github.com/evanlaube/termify/blob/main/assets/readme/demo.gif" alt="Demo of basic usage of termify"/>
+</p>
+
 ## Features
 - **Playback control**: Play, pause, skip, and change playback device
 
@@ -18,7 +22,7 @@ Termify is a terminal-based application for controlling Spotify from the command
 - `requests` library
 - `dotenv` library
 
-#### Create a Virtual Environment (Optional but reccomended)
+#### Create a Virtual Environment (Optional but recommended)
 This step can be safely skipped if you are already using a default virtual Environment.
 ```bash
 python -m venv venv
@@ -50,7 +54,7 @@ termify
 Navigate through menus using arrow keys or `Vim` style keys (h, j, k, l)
 
 ## Versioning
-- **Stable Versions**: Available on [PyPI](https://pypi.org). Install the latest stable version using `pip install termify`
+- **Stable Versions**: Available on [PyPI](https://pypi.org/project/termify-py/). Install the latest stable version using `pip install termify-py`
 - **Unstable Versions**: If you want to try the latest features or development version, you can install directly from source using `pip install .` after cloning the repository. Be aware that this version may have new features or bugs not present in the stable release.
 
 ## Contributing

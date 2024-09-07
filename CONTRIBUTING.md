@@ -18,7 +18,7 @@ In order to contribute to termify, please follow these guidelines:
 
 ## Code style and formatting
 - Follow the existing code style and formatting conventions.
-- Use meaningfull variable and function names - longer names are usually preferred to shorter ones, within reason.
+- Use meaningful variable and function names - longer names are usually preferred to shorter ones, within reason.
 - Write clear and concise comments to explain complex code segments.
 
 ## Reporting Issues

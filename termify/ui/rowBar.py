@@ -3,11 +3,11 @@ import curses
 from .element import Element
 
 class RowBar(Element):
-    def __init__(self, elements, seperator='\t', color=-1, background=-1):
+    def __init__(self, elements, separator='\t', color=-1, background=-1):
         super().__init__('', color=color, background=background)
         self.selectable = True 
         self.elements = elements
-        self.seperator = '\t'
+        self.separator = '\t'
         self.selectedIndex = 0
 
         allNotSelectable = True
@@ -29,9 +29,9 @@ class RowBar(Element):
         string = ''
         for id, element in enumerate(self.elements):
             if id == self.selectedIndex and selected:
-                string += element.getStr(selected=True) + self.seperator
+                string += element.getStr(selected=True) + self.separator
             else:
-                string += element.getStr() + self.seperator
+                string += element.getStr() + self.separator
 
         return string
 
