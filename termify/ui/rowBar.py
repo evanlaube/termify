@@ -10,6 +10,15 @@ class RowBar(Element):
         self.seperator = '\t'
         self.selectedIndex = 0
 
+        allNotSelectable = True
+        for element in self.elements:
+            if element.selectable:
+                allNotSelectable = False
+                break
+
+        if allNotSelectable:
+            self.selectable = False
+
     def handleInput(self, key):
         if (key in (curses.KEY_LEFT, ord('h'))) and self.selectedIndex > 0:
             self.selectedIndex -= 1
@@ -28,3 +37,7 @@ class RowBar(Element):
 
     def triggerAction(self):
         self.elements[self.selectedIndex].triggerAction()
+
+    def update(self):
+        for element in self.elements:
+            element.update()

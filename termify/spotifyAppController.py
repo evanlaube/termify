@@ -2,8 +2,10 @@
 import curses
 from termify.playbackMonitor import PlaybackMonitor
 from termify.spotifyApi.spotifyApi import SpotifyApi
-from termify.ui import UIManager, Menu, Button, Label, RowBar
+from termify.ui import UIManager, Menu, Button, Label, RowBar, ProgressBar
 from math import floor
+
+
 
 
 class SpotifyAppController:
@@ -55,30 +57,58 @@ class SpotifyAppController:
                 artistString += ', '
             artistString += artist['name']
 
+
+        labelString = f'Currently Playing:\n\t{songTitle}\n\t{artistString} - {album}\n' 
+
+        return labelString 
+    
+    def songProgressBarRefresh(self):
+        currentSong = self.monitor.getCurrentSong()
+        if currentSong == None or currentSong == {}:
+            return 0
+
+        songLength = float(currentSong['item']['duration_ms'])
+        progress = float(currentSong['progress_ms'])
+
+        if progress > songLength:
+            progress = songLength
+
+        return progress / songLength 
+
+    def getSongTimeLabel(self):
+        currentSong = self.monitor.getCurrentSong()
+        if currentSong == None or currentSong == {}:
+            return "(-:-- / -:--)" 
+
         songLength = floor(currentSong['item']['duration_ms'] / 1000.0)
         progress = floor(currentSong['progress_ms'] / 1000.0)
         if progress > songLength:
             progress = songLength
 
-        labelString = f'Currently Playing:\n\t{songTitle}\t({progress//60}:{(progress%60):02d} / {songLength//60}:{(songLength%60):02d})\n\t{artistString} - {album}\n' 
+        return f'({progress//60}:{(progress%60):02d} / {songLength//60}:{(songLength%60):02d})'
 
-        return labelString 
-
-
+        
     def buildMenus(self):
         self.buildMainMenu()
 
     def buildMainMenu(self):
         mainMenu = Menu('main')
         playButtonLabel = self.getPlayButtonLabel()
-        mainMenu.addElement('titleBar', Label("Termify v1.0.0\n", background=curses.COLOR_BLUE, color=curses.COLOR_WHITE))
+
+        mainMenu.addElement('titleBar', Label("Termify v1.1.0\n", background=curses.COLOR_BLUE, color=curses.COLOR_WHITE))
         mainMenu.addElement('currentSong', Label(str(self.getCurrentSongDisplayLabel()), refreshFunction=lambda: self.getCurrentSongDisplayLabel()))
+
+        progressBar = ProgressBar(20, refreshFunction=lambda: self.songProgressBarRefresh())
+        timeLabel = Label(str(self.getSongTimeLabel()), refreshFunction=lambda: self.getSongTimeLabel())
+        progressBarRow = RowBar([Label(''), progressBar, timeLabel]) # Add empty label to indent rowBar
+        mainMenu.addElement('progressBar', progressBarRow)
+        mainMenu.addElement('postProgressbarBreak', Label('')) # Line break under progress bar
 
         playButton = Button(playButtonLabel, lambda: self.playPauseToggle(), setLabelToResult=True)
         skipButton = Button('Skip Song', lambda: self.api.skip())
         prevButton = Button('Previous Song', lambda: self.api.prev())
         playbackBar = RowBar([playButton, skipButton, prevButton])
-        mainMenu.addElement('playbackBar', playbackBar)
+        mainMenu.addElement('playbackControlBar', playbackBar)
 
         mainMenu.addElement('changeDeviceButton', Button('Change Playback Device', lambda: self.selectPlaybackDevice()))
         mainMenu.addElement('quitButton', Button('Quit', lambda: exit()))

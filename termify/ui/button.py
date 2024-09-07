@@ -15,7 +15,7 @@ class Button(Element):
 
     def getStr(self, selected=False):
         if selected:
-            return '[*] ' + self.label
+            return '[>' + self.label + '<]'
         else:
-            return '[ ] ' + self.label
+            return '[ ' + self.label + ' ]'
 
