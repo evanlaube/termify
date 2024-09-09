@@ -12,8 +12,13 @@ class UIManager:
         curses.curs_set(0)
         curses.start_color()
         curses.use_default_colors()
-        curses.init_pair(1, -1, -1)
-        self.stdscr.bkgd(' ', curses.color_pair(1))
+
+        # Initialize color pairs
+        for i in range(0, curses.COLORS-2):
+            curses.init_pair(i+1,i,-1)
+        curses.init_pair(0, -1, -1)
+
+        self.stdscr.bkgd(' ', curses.color_pair(0))
         self.stdscr.clear()
         self.stdscr.refresh()
         self.stdscr.timeout(100)

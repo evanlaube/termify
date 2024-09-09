@@ -1,11 +1,11 @@
 
 class Element:
-    def __init__(self, label, refreshFunction=None, color=-1, background=-1):
+    def __init__(self, label, refreshFunction=None, color=0):
         self.label = label
         self.color = color
-        self.background = background
         self.refreshFunction = refreshFunction
         self.selectable = False
+        self.isContainer = False
     
     def update(self):
         if self.refreshFunction == None:

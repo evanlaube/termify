@@ -58,10 +58,23 @@ class Menu:
         for id, key in enumerate(self.elements.keys()):
             self.elements[key].update()
     
-    def display(self, stdscr):
+    def display(self, stdscr, ending='\n'):
         stdscr.clear()
         for id, key in enumerate(self.elements.keys()):
-            # TODO: Find some way to set color to colors of elements without using init_pair
             element = self.elements[key]
-            selected = (id == self.selectedIndex)
-            stdscr.addstr(str(element.getStr(selected=selected)) + '\n')
+            
+            if element.isContainer:
+                separator = element.separator
+                for barid, e in enumerate(element.elements):
+                    barselected = False
+                    if barid == element.selectedIndex:
+                        barselected = True
+                    color = e.color
+
+                    stdscr.addstr(str(e.getStr(selected=barselected)) + separator, curses.color_pair(color))
+                stdscr.addstr('\n')
+            else:
+                color = element.color
+                selected = (id == self.selectedIndex)
+
+                stdscr.addstr(str(element.getStr(selected=selected)) + ending, curses.color_pair(color))

@@ -2,8 +2,8 @@
 from .element import Element
 
 class Button(Element):
-    def __init__(self, label, action, refreshFunction=None, color=-1, background=-1, setLabelToResult=False):
-        super().__init__(label, refreshFunction=refreshFunction, color=color, background=background)
+    def __init__(self, label, action, refreshFunction=None, color=0, setLabelToResult=False):
+        super().__init__(label, refreshFunction=refreshFunction, color=color)
         self.action = action
         self.selectable = True
         self.setLabelToResult = setLabelToResult
@@ -18,4 +18,3 @@ class Button(Element):
             return '[>' + self.label + '<]'
         else:
             return '[ ' + self.label + ' ]'
-

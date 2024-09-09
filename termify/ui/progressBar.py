@@ -2,8 +2,8 @@
 from .element import Element
 
 class ProgressBar(Element):
-    def __init__(self, length, progress=0, refreshFunction=None, color=-1, background=-1, label=''):
-        super().__init__(label, refreshFunction=refreshFunction, color=color, background=background)
+    def __init__(self, length, progress=0, refreshFunction=None, color=0, label=''):
+        super().__init__(label, refreshFunction=refreshFunction, color=color)
         self.length = length
         self.selectable = False
         self.progress = progress # Float between 0 and 1
