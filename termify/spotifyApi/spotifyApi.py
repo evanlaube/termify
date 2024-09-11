@@ -27,8 +27,14 @@ class SpotifyApi():
 
         return response
 
-    def play(self):
-        return self.makeRequest('PUT', '/me/player/play')
+    def play(self, contextURI=None):
+        body = {}
+        if contextURI != None:
+            body['context_uri'] = contextURI
+
+        body = json.dumps(body)
+        return self.makeRequest('PUT', '/me/player/play', body=body)
+
 
 
     def pause(self):
@@ -92,5 +98,12 @@ class SpotifyApi():
             return response.json()
         except:
             return None 
+
+    def getUserPlaylists(self):
+        try:
+            response = self.makeRequest('GET', '/me/playlists')
+            return response.json()
+        except:
+            return None
 
 
