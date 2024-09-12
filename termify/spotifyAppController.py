@@ -7,7 +7,16 @@ from math import floor
 
 
 class SpotifyAppController:
+    """A class that acts as a wrapper between the ui module and spotifyApi module. 
+    The purpose of this class is to create all of the menus, as well as the functions
+    that are needed by them
+    :param api: The SpotifyApi to make requests with
+    :type api: SpotifyApi
+    :param uiManager: The UIManager to create menus inside of
+    :type uiManager: UIManager"""
     def __init__(self, api, uiManager):
+        """Constructor method
+        """
         self.api = api
         self.uiManager = uiManager
         self.monitor = PlaybackMonitor(self.api)
@@ -18,10 +27,15 @@ class SpotifyAppController:
         self.uiManager.switchMenu('main')
 
     def run(self):
+        """Begin the main loop of the UIManager"""
         self.uiManager.run()
 
     
     def playPauseToggle(self):
+        """Toggle playback between play and pause
+        :return: The new label of the playback toggle button - either 'Play' or 'Pause'
+        :rtype: str
+        """
         state = self.api.getPlaybackState()
 
         if state.status_code == 204:
@@ -36,6 +50,10 @@ class SpotifyAppController:
             return 'Pause'
         
     def getPlayButtonLabel(self):
+        """Get what the label of the playback button should be. Makes a whole request to API
+        :return: Label of playback toggle button - either 'Play' or 'Pause'
+        :rtype: str
+        """
         state = self.api.getPlaybackState()
     
         if(state.status_code == 200 and state.json()['is_playing']):
@@ -43,6 +61,11 @@ class SpotifyAppController:
         return 'Play'
 
     def getCurrentSongDisplayLabel(self):
+        """Get the formatted string of all of the information to display about
+        the currently playing song
+        :return: Formatted string of song information
+        :rtype: str
+        """
         currentSong = self.monitor.getCurrentSong()
         if currentSong == None or currentSong == {}:
             return "No media currently playing\n"
@@ -61,6 +84,10 @@ class SpotifyAppController:
         return labelString 
     
     def songProgressBarRefresh(self):
+        """Refresh function for the song progress bar
+        :return: The percentage of progress through current song - between 0 and 1
+        :rtype: float
+        """
         currentSong = self.monitor.getCurrentSong()
         if currentSong == None or currentSong == {}:
             return 0
@@ -74,6 +101,10 @@ class SpotifyAppController:
         return progress / songLength 
 
     def getSongTimeLabel(self):
+        """Gets the numerical label of the progress through the song
+        :return: Numerical progress label
+        :rtype: str
+        """
         currentSong = self.monitor.getCurrentSong()
         if currentSong == None or currentSong == {}:
             return "(-:-- / -:--)" 
@@ -87,9 +118,12 @@ class SpotifyAppController:
 
         
     def buildMenus(self):
+        """Create all menus and add them to the UIManager"""
         self.buildMainMenu()
 
     def buildMainMenu(self):
+        """Insert the main menu with basic playback control, as well as access to switching to other menus, 
+        into the UIManager"""
         mainMenu = Menu('main')
         playButtonLabel = self.getPlayButtonLabel()
 
@@ -114,6 +148,7 @@ class SpotifyAppController:
         self.uiManager.addMenu(mainMenu)
 
     def selectPlaybackDevice(self):
+        """Cereate a new menu to select which playback device to use"""
         prevMenu = self.uiManager.currentMenu 
         selectMenu = Menu('deviceSelect')
 

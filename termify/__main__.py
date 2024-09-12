@@ -16,14 +16,14 @@ def main():
         print("No Client ID found in .env file.")
         id = input("\tEnter your Spotify App Client Id: ")
         configDir = Path(os.getenv('TERMIFY_ENV_PATH', Path.home() / '.termify'))
-        os.makedirs(str(configDir))
+        os.makedirs(str(configDir), exist_ok=True)
         set_key(envPath, 'TFY_CLIENT_ID', id)
-    
+
     curses.wrapper(launch)
 
 def launch(stdscr):
     api = SpotifyApi()
-    uiManager = UIManager(stdscr, api)
+    uiManager = UIManager(stdscr)
     controller = SpotifyAppController(api, uiManager)
 
     controller.run()

@@ -1,4 +1,6 @@
 
+""" A list of color constants to use with the ui module """
+
 DEFAULT = 0
 BLACK = 1 
 RED = 2

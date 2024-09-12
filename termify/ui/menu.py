@@ -1,14 +1,27 @@
 import curses
 
-
 class Menu:
+    """A class for storing different 'screens' of elements, as well as handling input on 
+    these screens. The main purpose of this class is to easily switch between menus using
+    the UIManager class
+    :param name: The name of the menu
+    :type name: str
+    """
     def __init__(self, name):
+        """Constructor method
+        """
         self.name = name
         self.elements = {} 
         self.selectedIndex = 0
         self.hasSelectable = False
 
     def addElement(self, name, element):
+        """Add an element to the menu
+        :param name: The name of the element
+        :type name: str
+        :param element: The element to add
+        :type element: ui.Element
+        """
         if name in self.elements.keys():
             raise Exception(f"Element with name '{name}' already exists")
         self.elements[name] = element
@@ -17,6 +30,10 @@ class Menu:
             self.selectedIndex = len(self.elements)-1
 
     def handleInput(self, key):
+        """Forward the input key to the selected element in the menu
+        :param key: The input key
+        :type key: int
+        """
         elementKey = list(self.elements)[self.selectedIndex]
         if key == curses.KEY_UP or key == ord('k'): 
             if self.selectedIndex <= 0:
@@ -34,6 +51,7 @@ class Menu:
             self.elements[elementKey].handleInput(key)
 
     def increaseSelectedIndex(self):
+        """Increase the selected index of the menu, skipping unselectable elements"""
         if self.selectedIndex >= len(self.elements)-1:
             return
         self.selectedIndex += 1
@@ -44,6 +62,7 @@ class Menu:
                 break
 
     def decreaseSelectedIndex(self):
+        """Decrease the selected index of the menu, skipping unselectable elements"""
         if self.selectedIndex <= 0:
             return
         self.selectedIndex -= 1
@@ -55,13 +74,20 @@ class Menu:
             
             
     def update(self):
-        for id, key in enumerate(self.elements.keys()):
+        """Run the update function of each element in the menu"""
+        for key in self.elements.keys():
             self.elements[key].update()
     
     def display(self, stdscr, ending='\n'):
+        """Display all of the elements in the menu
+        :param stdscr: The display to print to
+        :param ending: The character(s) to print after each element
+        :type ending: str
+        """
         stdscr.clear()
         for id, key in enumerate(self.elements.keys()):
             element = self.elements[key]
+            selected = (id == self.selectedIndex)
             
             if element.isContainer:
                 separator = element.separator
@@ -71,10 +97,8 @@ class Menu:
                         barselected = True
                     color = e.color
 
-                    stdscr.addstr(str(e.getStr(selected=barselected)) + separator, curses.color_pair(color))
+                    stdscr.addstr(str(e.getStr(selected=(barselected & selected))) + separator, curses.color_pair(color))
                 stdscr.addstr('\n')
             else:
                 color = element.color
-                selected = (id == self.selectedIndex)
-
                 stdscr.addstr(str(element.getStr(selected=selected)) + ending, curses.color_pair(color))
