@@ -28,15 +28,22 @@ class RowBar(Element):
         if allNotSelectable:
             self.selectable = False
 
+        # Shortcut to ensure that an element is selected by default to prevent selecting
+        # unselectable elements
+        if self.selectable:
+            self.increaseSelectedIndex()
+            self.decreaseSelectedIndex()
+
+
     def handleInput(self, key):
         """Pass input keys from the menu to the selected element
         :param key: The key that was input
         :type key: int
         """
-        if (key in (curses.KEY_LEFT, ord('h'))) and self.selectedIndex > 0:
-            self.selectedIndex -= 1
-        elif (key in (curses.KEY_RIGHT, ord('l'))) and self.selectedIndex < len(self.elements)-1:
-            self.selectedIndex += 1
+        if (key in (curses.KEY_LEFT, ord('h'))):
+            self.decreaseSelectedIndex()
+        elif (key in (curses.KEY_RIGHT, ord('l'))):
+            self.increaseSelectedIndex()
 
     def getStr(self, selected=False):
         """Get the display string of the rowbar, including getting the strings of all of 
@@ -58,6 +65,29 @@ class RowBar(Element):
     def triggerAction(self):
         """Trigger the action of the element contained in the bar at the selected index"""
         self.elements[self.selectedIndex].triggerAction()
+
+    def increaseSelectedIndex(self):
+        """Increase the selected index of the menu, skipping unselectable elements"""
+        if self.selectedIndex >= len(self.elements)-1:
+            return
+
+        self.selectedIndex += 1
+        while self.elements[self.selectedIndex].selectable == False:
+            self.increaseSelectedIndex()
+            if(self.selectedIndex >= len(self.elements)-1):
+                self.decreaseSelectedIndex()
+                break
+
+    def decreaseSelectedIndex(self):
+        """Decrease the selected index of the menu, skipping unselectable elements"""
+        if self.selectedIndex <= 0:
+            return
+        self.selectedIndex -= 1
+        while self.elements[self.selectedIndex].selectable == False:
+            self.decreaseSelectedIndex()
+            if(self.selectedIndex <= 0):
+                self.increaseSelectedIndex()
+                break
 
     def update(self):
         """Update each element in the RowBar"""
