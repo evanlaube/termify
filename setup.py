@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
         name='termify-py',
-        version='1.1.0',
+        version='1.1.1',
         description='A terminal-based Spotify controller',
         long_description=open('README.md').read(),
         long_description_content_type='text/markdown',
@@ -15,6 +15,9 @@ setup(
             'requests',
             'python-dotenv'
             ],
+        extras_require={
+            'windows': ['windows-curses']
+        },
         entry_points={
             'console_scripts': [
                 'termify=termify.__main__:main',
