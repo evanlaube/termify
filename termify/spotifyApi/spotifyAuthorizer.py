@@ -91,7 +91,7 @@ class SpotifyAuthorizer:
             f"&redirect_uri={REDIRECT_URI}"
             f"&code_challenge_method=S256"
             f"&code_challenge={challenge}"
-            f"&scope=user-read-playback-state user-modify-playback-state"
+            f"&scope=user-read-playback-state user-modify-playback-state user-read-private playlist-read-private"
             )
         return authUrl
 

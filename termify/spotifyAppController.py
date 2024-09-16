@@ -2,7 +2,7 @@
 import curses
 from termify.playbackMonitor import PlaybackMonitor
 from termify.spotifyApi.spotifyApi import SpotifyApi
-from termify.ui import UIManager, Menu, Button, Label, RowBar, ProgressBar, colors
+from termify.ui import UIManager, Menu, Button, Label, RowBar, ProgressBar, colors 
 from math import floor
 
 
@@ -142,13 +142,14 @@ class SpotifyAppController:
         playbackBar = RowBar([playButton, skipButton, prevButton])
         mainMenu.addElement('playbackControlBar', playbackBar)
 
+        mainMenu.addElement('changePlaylistButton', Button('Select a Playlist', lambda: self.selectPlaylist()))
         mainMenu.addElement('changeDeviceButton', Button('Change Playback Device', lambda: self.selectPlaybackDevice()))
         mainMenu.addElement('quitButton', Button('Quit', lambda: exit()))
         
         self.uiManager.addMenu(mainMenu)
 
     def selectPlaybackDevice(self):
-        """Cereate a new menu to select which playback device to use"""
+        """Create a new menu to select which playback device to use"""
         prevMenu = self.uiManager.currentMenu 
         selectMenu = Menu('deviceSelect')
 
@@ -168,6 +169,45 @@ class SpotifyAppController:
 
         self.uiManager.addMenu(selectMenu)
         self.uiManager.switchMenu('deviceSelect')
+
+    def createPlaylistRowbar(self, playlistJson):
+        """ Create a visual rowbar to display playlist information and contain 
+        action buttons
+        :param playlistJson: The data for the playist from the Spotify API
+        :type param: dict
+        :return: The RowBar element
+        :rtype: RowBar"""
+        # Format name to be at least 40 characters - padded with spaces
+        name = f"{playlistJson['name'] : <40}"
+        uri = playlistJson['uri']
+
+        label = Label('\t' + name)
+        playButton = Button('Play', action=lambda: self.api.play(contextURI=uri))
+        bar = RowBar([label, playButton])
+        
+        return bar
+
+    
+    def selectPlaylist(self):
+        """Create a new menu to select which of the user's saved playlists to play"""
+    
+        prevMenu = self.uiManager.currentMenu
+
+        playlistMenu = Menu("playlistSelect")
+
+        playlistMenu.addElement('prompt', Label("Select a playlist: "))
+
+        playlists = self.api.getUserPlaylists()
+        if playlists == {}:
+            playlistMenu.addElement('noPlaylistLabel', Label("You don't have any saved or created playlists!"))
+        else:
+            for playlist in playlists['items']:
+                playlistMenu.addElement('playlist-'+playlist['id'], self.createPlaylistRowbar(playlist))
+
+        playlistMenu.addElement('cancelButton', Button('Cancel', lambda: self.uiManager.switchMenu(prevMenu)))
+
+        self.uiManager.addMenu(playlistMenu)
+        self.uiManager.switchMenu('playlistSelect')
 
 
 
