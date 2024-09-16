@@ -18,9 +18,13 @@ class UIManager:
         curses.use_default_colors()
 
         # Initialize color pairs
-        for i in range(0, curses.COLORS-2):
+        for i in range(0, min(curses.COLORS-2, 254)):
             curses.init_pair(i+1,i,-1)
-        curses.init_pair(0, -1, -1)
+        try:
+            curses.init_pair(0, -1, -1)
+        except:
+            # TODO: Fix windows color schemes
+            pass
 
         self.stdscr.bkgd(' ', curses.color_pair(0))
         self.stdscr.clear()

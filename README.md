@@ -28,6 +28,11 @@ This step can be safely skipped if you are already using a default virtual Envir
 python -m venv venv
 source venv/bin/activate # On Windows use: venv\Scripts\activate
 ```
+#### Windows Only
+As of now, on windows, in order for termify to work, the `windows-curses` package must be installed with
+```bash
+pip install windows-curses
+```
 
 #### Install Termify
 ```bash

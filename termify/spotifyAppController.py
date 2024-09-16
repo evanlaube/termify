@@ -127,7 +127,7 @@ class SpotifyAppController:
         mainMenu = Menu('main')
         playButtonLabel = self.getPlayButtonLabel()
 
-        mainMenu.addElement('titleBar', Label("Termify v1.1.0\n", color=colors.CYAN))
+        mainMenu.addElement('titleBar', Label("Termify v1.1.1\n", color=colors.CYAN))
         mainMenu.addElement('currentSong', Label(str(self.getCurrentSongDisplayLabel()), refreshFunction=lambda: self.getCurrentSongDisplayLabel()))
 
         progressBar = ProgressBar(20, refreshFunction=lambda: self.songProgressBarRefresh())
