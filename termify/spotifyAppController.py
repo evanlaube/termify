@@ -1,8 +1,8 @@
 
 import curses
+from procyon import UIManager, Menu, Button, Label, RowBar, ProgressBar, colors 
 from termify.playbackMonitor import PlaybackMonitor
 from termify.spotifyApi.spotifyApi import SpotifyApi
-from termify.ui import UIManager, Menu, Button, Label, RowBar, ProgressBar, colors 
 from math import floor
 
 
@@ -14,17 +14,18 @@ class SpotifyAppController:
     :type api: SpotifyApi
     :param uiManager: The UIManager to create menus inside of
     :type uiManager: UIManager"""
-    def __init__(self, api, uiManager):
+    def __init__(self, api : SpotifyApi, uiManager : UIManager):
         """Constructor method
         """
-        self.api = api
-        self.uiManager = uiManager
-        self.monitor = PlaybackMonitor(self.api)
+        self.api : SpotifyApi = api
+        self.uiManager : UIManager = uiManager
+        self.monitor : PlaybackMonitor = PlaybackMonitor(self.api)
         
         self.monitor.start()
 
         self.buildMenus()
-        self.uiManager.switchMenu('main')
+        mainMenu = self.uiManager.getMenuByName('main')
+        self.uiManager._rootPanel.loadMenu(mainMenu)
 
     def run(self):
         """Begin the main loop of the UIManager"""
@@ -150,7 +151,11 @@ class SpotifyAppController:
 
     def selectPlaybackDevice(self):
         """Create a new menu to select which playback device to use"""
-        prevMenu = self.uiManager.currentMenu 
+        prevMenu = self.uiManager._rootPanel.getMenu()
+
+        if prevMenu is None:
+            raise Exception("Switching from empty menu")
+
         selectMenu = Menu('deviceSelect')
 
         devices = self.api.getDevices()['devices']
@@ -161,14 +166,15 @@ class SpotifyAppController:
             name = device['name']
             
             buttonName = 'select-' + id
-            selectMenu.addElement(buttonName, Button(name, lambda id=id: (self.api.setPlaybackDevice(id), self.uiManager.switchMenu(prevMenu))))
+            selectMenu.addElement(buttonName, Button(name, lambda id=id: (self.api.setPlaybackDevice(id), self.uiManager._rootPanel.loadMenu(prevMenu))))
 
         selectMenu.addElement('newLine', Label(''))
-        selectMenu.addElement('cancelButton', Button('Cancel', lambda: self.uiManager.switchMenu(prevMenu)))
+        selectMenu.addElement('cancelButton', Button('Cancel', lambda: self.uiManager._rootPanel.loadMenu(prevMenu)))
         selectMenu.addElement('deviceTip', Label("\nIf you don't see your device, make sure the Spotify app is running on it"))
 
         self.uiManager.addMenu(selectMenu)
-        self.uiManager.switchMenu('deviceSelect')
+        deviceSelectMenu = self.uiManager.getMenuByName('deviceSelect')
+        self.uiManager._rootPanel.loadMenu(deviceSelectMenu)
 
     def createPlaylistRowbar(self, playlistJson):
         """ Create a visual rowbar to display playlist information and contain 
@@ -191,7 +197,10 @@ class SpotifyAppController:
     def selectPlaylist(self):
         """Create a new menu to select which of the user's saved playlists to play"""
     
-        prevMenu = self.uiManager.currentMenu
+        prevMenu = self.uiManager._rootPanel.getMenu()
+
+        if prevMenu is None:
+            raise Exception("Switching from None")
 
         playlistMenu = Menu("playlistSelect")
 
@@ -202,12 +211,11 @@ class SpotifyAppController:
             playlistMenu.addElement('noPlaylistLabel', Label("You don't have any saved or created playlists!"))
         else:
             for playlist in playlists['items']:
-                playlistMenu.addElement('playlist-'+playlist['id'], self.createPlaylistRowbar(playlist))
+                playlistMenu.addElement('playlist-' + playlist['id'], self.createPlaylistRowbar(playlist))
 
-        playlistMenu.addElement('cancelButton', Button('Cancel', lambda: self.uiManager.switchMenu(prevMenu)))
+        playlistMenu.addElement('cancelButton', Button('Cancel', lambda: self.uiManager._rootPanel.loadMenu(prevMenu)))
 
         self.uiManager.addMenu(playlistMenu)
-        self.uiManager.switchMenu('playlistSelect')
-
-
+        playlistSelectMenu = self.uiManager.getMenuByName('playlistSelect')
+        self.uiManager._rootPanel.loadMenu(playlistSelectMenu)
 

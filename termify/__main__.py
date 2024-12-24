@@ -1,7 +1,7 @@
 
 from termify.spotifyApi import SpotifyApi
 from termify.spotifyAppController import SpotifyAppController
-from termify.ui import UIManager
+from procyon import UIManager
 from dotenv import set_key, get_key
 import curses
 import os
