@@ -13,7 +13,7 @@ setup(
         packages=find_packages(),
         install_requires=[
             'requests',
-            'procyon=py',
+            'procyon-py',
             'python-dotenv'
             ],
         extras_require={
