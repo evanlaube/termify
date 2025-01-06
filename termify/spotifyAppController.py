@@ -1,6 +1,7 @@
 
 import curses
 from procyon import UIManager, Menu, Button, Label, RowBar, ProgressBar, colors 
+from termify import __version__
 from termify.playbackMonitor import PlaybackMonitor
 from termify.spotifyApi.spotifyApi import SpotifyApi
 from math import floor
@@ -128,7 +129,7 @@ class SpotifyAppController:
         mainMenu = Menu('main')
         playButtonLabel = self.getPlayButtonLabel()
 
-        mainMenu.addElement('titleBar', Label("Termify v1.1.1\n", color=colors.CYAN))
+        mainMenu.addElement('titleBar', Label(f"Termify {__version__}\n", color=colors.CYAN))
         mainMenu.addElement('currentSong', Label(str(self.getCurrentSongDisplayLabel()), refreshFunction=lambda: self.getCurrentSongDisplayLabel()))
 
         progressBar = ProgressBar(20, refreshFunction=lambda: self.songProgressBarRefresh())
