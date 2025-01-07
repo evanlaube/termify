@@ -102,6 +102,20 @@ class MainMenu(Menu):
 
         return f'({progress//60}:{(progress%60):02d} / {songLength//60}:{(songLength%60):02d})'
     
+    def _increaseVolume(self):
+        """ Button function to increase playback volume by 10% """
+        currentvolume = self.monitor.getCurrentVolume()
+        newVolume = min(currentvolume + 10, 100)
+
+        self.api.setVolume(newVolume)
+
+    def _decreaseVolume(self):
+        """ Button function to decrease playback volume by 10% """
+        currentVolume = self.monitor.getCurrentVolume()
+        newVolume = max(currentVolume-10, 0)
+
+        self.api.setVolume(newVolume)
+    
     def _buildMenu(self):
         """Initialize all of the elements in the menu and add them to self """
         playButtonLabel = self._getPlayButtonLabel()
@@ -114,6 +128,13 @@ class MainMenu(Menu):
         progressBarRow = RowBar([Label(''), progressBar, timeLabel]) # Add empty label to indent rowBar
         self.addElement('progressBar', progressBarRow)
         self.addElement('postProgressbarBreak', Label('')) # Line break under progress bar
+
+        volumeProgressBar = ProgressBar(10, refreshFunction=lambda: (self.monitor.getCurrentVolume() / 100.0))
+        volumeUpButton = Button("+", lambda: self._increaseVolume())
+        volumeDownButton = Button("-", lambda: self._decreaseVolume())
+
+        volumeRowBar = RowBar([volumeDownButton, volumeProgressBar, volumeUpButton], separator=' ')
+        self.addElement('volumeRowBar', volumeRowBar)
 
         playButton = Button(playButtonLabel, lambda: self._playPauseToggle(), setLabelToResult=True)
         skipButton = Button('Skip Song', lambda: self.api.skip())

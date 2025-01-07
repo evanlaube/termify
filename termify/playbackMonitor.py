@@ -19,7 +19,7 @@ class PlaybackMonitor:
     def run(self):
         """Continuously check playback information"""
         while True:
-            song = self.api.getCurrentSong()
+            song = self.api.getPlaybackState().json()
             if song == None:
                 continue
 
@@ -40,8 +40,19 @@ class PlaybackMonitor:
         try:
             with self.lock:
                 if self.currentSong['item'] is None:
-                    return None
+                    return None 
 
                 return self.currentSong
         except:
-            return None
+            return None 
+
+    def getCurrentVolume(self):
+        """ Returns the current volume level of the playback """
+        try:
+            with self.lock:
+                if self.currentSong['item'] is None:
+                    return 0
+
+                return self.currentSong['device']['volume_percent']
+        except Exception as e:
+            return 0

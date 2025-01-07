@@ -15,7 +15,7 @@ class SpotifyApi():
         self.auth.refreshToken()
         self.token = self.auth.getToken()
 
-    def makeRequest(self, method, urlEndpoint, body={}):
+    def makeRequest(self, method, urlEndpoint, params={}, body={}):
         """Makes a request to the Spotify API and returns the response, or raises an error 
         if the status code of the response is not 200 or 204
         :param method: Method type. Example 'GET', 'PUT', 'POST'
@@ -36,7 +36,7 @@ class SpotifyApi():
 
         url = f'https://api.spotify.com/v1' + urlEndpoint
 
-        response = requests.request(method, url, headers=headers, data=body)
+        response = requests.request(method, url, headers=headers, params=params, data=body)
 
         if response.status_code not in (200, 204):
             raise Exception(f"Request failed with status code {response.status_code}: {response.text}")
@@ -95,6 +95,18 @@ class SpotifyApi():
         :rtype: requests.models.Response
         """
         return self.makeRequest('POST', '/me/player/previous')
+
+    def setVolume(self, volume: int):
+        """ Sets the current playback volume to the input volume 
+        :param volume: The volume to set to between 0 and 100
+        :type volume: int
+        """
+        params = {'volume_percent': volume}
+        try:
+            self.makeRequest('PUT', '/me/player/volume', params=params)
+            return True
+        except Exception as e:
+            return False
     
     def getPlaybackState(self):
         """Get the details of the current playback state 
