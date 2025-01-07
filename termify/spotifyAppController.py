@@ -4,8 +4,7 @@ from procyon import UIManager, Menu, Button, Label, RowBar, ProgressBar, colors
 from termify import __version__
 from termify.playbackMonitor import PlaybackMonitor
 from termify.spotifyApi.spotifyApi import SpotifyApi
-from termify.menus import MainMenu, PlaylistSelector, PlaybackDeviceSelector
-from math import floor
+from termify.menus import MainMenu, PlaylistSelector, PlaybackDeviceSelector, ErrorMenu
 
 class SpotifyAppController:
     """A class that acts as a wrapper between the ui module and spotifyApi module. 
@@ -32,13 +31,26 @@ class SpotifyAppController:
         self.uiManager.run()
 
     def loadMain(self):
+        """ Set the main panel back to the main menu """
         mainMenu = self.uiManager.getMenuByName('main')
         self.uiManager._rootPanel.loadMenu(mainMenu)
 
+    def loadMenu(self, menuName : Menu | str):
+        """ Load a given menu into the main panel """
+        if isinstance(menuName, str):
+            menu = self.uiManager.getMenuByName(menuName)
+        else:
+            menu = menuName
+
+        if menu is not None:
+            self.uiManager._rootPanel.loadMenu(menu)
+
     def getMonitor(self) -> PlaybackMonitor:
+        """ Returns the controller's playback monitor """
         return self.monitor
 
     def getApi(self) -> SpotifyApi:
+        """ Returns the controller's spotify api instance """
         return self.api
 
     def buildMenus(self):
@@ -57,4 +69,17 @@ class SpotifyAppController:
         playlistMenu = PlaylistSelector(self)
         self.uiManager.addMenu(playlistMenu)
         self.uiManager._rootPanel.loadMenu(playlistMenu)
+
+    def displayError(self, errorMessage, maxWidth=80, returnMenu=None):
+        """ Display an error dialog to the user
+        :param errorMessage: The message to display to the user
+        :type errorMessage: str
+        :param maxWidth: The max width for each line of the error message to be
+        :type maxWidth: int, optional 
+        :param returnMenu: The menu to return to after exiting the error 
+        :type returnMenu: procyon.Menu 
+        """
+        errorMenu = ErrorMenu(self, errorMessage, maxWidth=maxWidth, returnMenu=returnMenu)
+        self.uiManager.addMenu(errorMenu)
+        self.uiManager._rootPanel.loadMenu(errorMenu)
 

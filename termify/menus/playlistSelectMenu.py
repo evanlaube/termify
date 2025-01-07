@@ -2,6 +2,10 @@
 from procyon import Button, Label, Menu, RowBar
 
 class PlaylistSelector(Menu):
+    """A menu for selecting which playlist to set playback to. The menu consists
+    of a set of buttons corrosponding to each playlist saved or created by the
+    user's spotify account
+    """
     def __init__(self, controller):
         self.controller = controller
         self.api = controller.getApi()
@@ -11,12 +15,15 @@ class PlaylistSelector(Menu):
         self.buildMenu()
 
     def _selectPlaylistButtonFunction(self, uri):
+        """ The function to run when pressing a button corrosponding to a playlist
+        :param uri: The playlist uri to play on pressing the button
+        :type uri: str
+        """
         try:
             self.api.play(contextURI=uri)
-        except Exception as e:
-            # For now just return to prev menu
-            # TODO: Find a clean way to notify the user to activate a streaming device
-            return
+        except:
+            errorMsg = "No active streaming device found. Before using termify to control spotify, ensure that there is an active instance running on your account."
+            self.controller.displayError(errorMsg, 80, self)
 
     def createPlaylistRowbar(self, playlistJson):
         """ Create a visual rowbar to display playlist information and contain 
@@ -25,7 +32,6 @@ class PlaylistSelector(Menu):
         :type param: dict
         :return: The RowBar element
         :rtype: RowBar"""
-
 
         # Format name to be at least 40 characters - padded with spaces
         name = f"{playlistJson['name'] : <40}"
@@ -49,6 +55,7 @@ class PlaylistSelector(Menu):
         return bar
 
     def buildMenu(self):
+        """Initialize all elements and add them to the menu """
         self.addElement('prompt', Label("Select a playlist: "))
         playlists = self.api.getUserPlaylists()
         if playlists == {}:

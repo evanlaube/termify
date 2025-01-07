@@ -5,12 +5,17 @@ from procyon import Button, Label, Menu, ProgressBar, RowBar, colors
 from termify import __version__
 
 class MainMenu(Menu):
+    """ The main menu that displays plackback controls and information, as well
+    as a set of buttons to access other features of the app.
+    :param controller: The controller to access methods from
+    :type controller: SpotifyAppController
+    """
     def __init__(self, controller):
         self.controller = controller
         self.monitor = controller.getMonitor()
         self.api = controller.getApi()
         super().__init__('main')
-        self.buildMenu()
+        self._buildMenu()
     
     def _playPauseToggle(self):
         """Toggle playback between play and pause
@@ -97,7 +102,8 @@ class MainMenu(Menu):
 
         return f'({progress//60}:{(progress%60):02d} / {songLength//60}:{(songLength%60):02d})'
     
-    def buildMenu(self):
+    def _buildMenu(self):
+        """Initialize all of the elements in the menu and add them to self """
         playButtonLabel = self._getPlayButtonLabel()
 
         self.addElement('titleBar', Label(f"Termify {__version__}\n", color=colors.CYAN))
