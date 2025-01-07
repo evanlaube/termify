@@ -37,5 +37,11 @@ class PlaybackMonitor:
         :return: Current playback information
         :rtype: dict
         """
-        with self.lock:
-            return self.currentSong
+        try:
+            with self.lock:
+                if self.currentSong['item'] is None:
+                    return None
+
+                return self.currentSong
+        except:
+            return None
