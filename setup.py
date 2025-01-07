@@ -1,9 +1,15 @@
 from setuptools import setup, find_packages
-import termify
+
+def getVersion():
+    version_file = 'termify/__version__.py'
+    with open(version_file) as f:
+        globals_dict = {}
+        exec(f.read(), globals_dict)
+        return globals_dict['__version__']
 
 setup(
         name='termify-py',
-        version=termify.__version__,
+        version=getVersion(),
         description='A terminal-based Spotify controller',
         long_description=open('README.md').read(),
         long_description_content_type='text/markdown',
