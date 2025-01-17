@@ -15,6 +15,7 @@ class MainMenu(Menu):
         self.monitor = controller.getMonitor()
         self.api = controller.getApi()
         super().__init__('main')
+        self._desiredVolume = self.monitor.getCurrentVolume()
         self._buildMenu()
     
     def _playPauseToggle(self):
@@ -104,17 +105,23 @@ class MainMenu(Menu):
     
     def _increaseVolume(self):
         """ Button function to increase playback volume by 10% """
-        currentvolume = self.monitor.getCurrentVolume()
+        currentvolume = self._desiredVolume 
         newVolume = min(currentvolume + 10, 100)
 
-        self.api.setVolume(newVolume)
+        self._desiredVolume = newVolume
+        self.api.setVolume(self._desiredVolume)
 
     def _decreaseVolume(self):
         """ Button function to decrease playback volume by 10% """
-        currentVolume = self.monitor.getCurrentVolume()
+        currentVolume = self._desiredVolume 
         newVolume = max(currentVolume-10, 0)
 
-        self.api.setVolume(newVolume)
+        self._desiredVolume = newVolume
+        self.api.setVolume(self._desiredVolume)
+
+    def _volumeBarRefresh(self):
+        """ Refresh function for volume progress bar """
+        return self._desiredVolume / 100.0
     
     def _buildMenu(self):
         """Initialize all of the elements in the menu and add them to self """
@@ -129,7 +136,7 @@ class MainMenu(Menu):
         self.addElement('progressBar', progressBarRow)
         self.addElement('postProgressbarBreak', Label('')) # Line break under progress bar
 
-        volumeProgressBar = ProgressBar(10, refreshFunction=lambda: (self.monitor.getCurrentVolume() / 100.0))
+        volumeProgressBar = ProgressBar(10, refreshFunction=lambda: self._volumeBarRefresh())
         volumeUpButton = Button("+", lambda: self._increaseVolume())
         volumeDownButton = Button("-", lambda: self._decreaseVolume())
 

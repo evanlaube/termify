@@ -29,6 +29,14 @@ class PlaybackMonitor:
 
     def start(self):
         """Begin the run loop"""
+        # First, get base data:
+        song = self.api.getPlaybackState()
+        if song is not None:
+            try:
+                self.currentSong = song.json()
+            except:
+                pass
+
         thread = threading.Thread(target=self.run, daemon=True)
         thread.start()
 
