@@ -127,7 +127,6 @@ class MainMenu(Menu):
         """Initialize all of the elements in the menu and add them to self """
         playButtonLabel = self._getPlayButtonLabel()
 
-        self.addElement('titleBar', Label(f"Termify {__version__}\n", color=colors.CYAN))
         self.addElement('currentSong', Label(str(self._getCurrentSongDisplayLabel()), refreshFunction=lambda: self._getCurrentSongDisplayLabel()))
 
         progressBar = ProgressBar(20, refreshFunction=lambda: self._songProgressBarRefresh())
@@ -149,7 +148,4 @@ class MainMenu(Menu):
         playbackBar = RowBar([playButton, skipButton, prevButton])
         self.addElement('playbackControlBar', playbackBar)
 
-        self.addElement('changePlaylistButton', Button('Select a Playlist', lambda: self.controller.selectPlaylist()))
-        self.addElement('changeDeviceButton', Button('Change Playback Device', lambda: self.controller.selectPlaybackDevice()))
-        self.addElement('quitButton', Button('Quit', lambda: exit()))
 

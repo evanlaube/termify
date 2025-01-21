@@ -1,10 +1,10 @@
 
 import curses
-from procyon import UIManager, Menu, Button, Label, RowBar, ProgressBar, colors 
+from procyon import Panel, UIManager, Menu, Button, Label, RowBar, ProgressBar, colors 
 from termify import __version__
 from termify.playbackMonitor import PlaybackMonitor
 from termify.spotifyApi.spotifyApi import SpotifyApi
-from termify.menus import MainMenu, PlaylistSelector, PlaybackDeviceSelector, ErrorMenu
+from termify.menus import MainMenu, PlaylistSelector, PlaybackDeviceSelector, ErrorMenu, SideBar
 
 class SpotifyAppController:
     """A class that acts as a wrapper between the ui module and spotifyApi module. 
@@ -19,6 +19,13 @@ class SpotifyAppController:
         """
         self.api : SpotifyApi = api
         self.uiManager : UIManager = uiManager
+
+        left, right = self.uiManager.splitVertical()
+        self._sideBar = left
+        self._mainPanel = right
+
+        self._sideBar.setSize(24, -1)
+
         self.monitor : PlaybackMonitor = PlaybackMonitor(self.api)
         
         self.monitor.start()
@@ -33,7 +40,9 @@ class SpotifyAppController:
     def loadMain(self):
         """ Set the main panel back to the main menu """
         mainMenu = self.uiManager.getMenuByName('main')
-        self.uiManager._rootPanel.loadMenu(mainMenu)
+        self._mainPanel.loadMenu(mainMenu)
+        sideBar = self.uiManager.getMenuByName('sidebar')
+        self._sideBar.loadMenu(sideBar)
 
     def loadMenu(self, menuName : Menu | str):
         """ Load a given menu into the main panel """
@@ -57,18 +66,24 @@ class SpotifyAppController:
         """Create all menus and add them to the UIManager"""
         mainMenu = MainMenu(self)
         self.uiManager.addMenu(mainMenu)
+        sideBar = SideBar(self)
+        self.uiManager.addMenu(sideBar)
+
+    def playbackControls(self):
+        main = self.uiManager.getMenuByName('main')
+        self._mainPanel.loadMenu(main)
 
     def selectPlaybackDevice(self):
         """Create a new menu to select which playback device to use"""
         selectMenu = PlaybackDeviceSelector(self)
         self.uiManager.addMenu(selectMenu)
-        self.uiManager._rootPanel.loadMenu(selectMenu)
+        self._mainPanel.loadMenu(selectMenu)
 
     def selectPlaylist(self):
         """Create a new menu to select which of the user's saved playlists to play"""
         playlistMenu = PlaylistSelector(self)
         self.uiManager.addMenu(playlistMenu)
-        self.uiManager._rootPanel.loadMenu(playlistMenu)
+        self._mainPanel.loadMenu(playlistMenu)
 
     def displayError(self, errorMessage, maxWidth=80, returnMenu=None):
         """ Display an error dialog to the user
