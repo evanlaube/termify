@@ -113,7 +113,8 @@ class SpotifyApi():
         :return: The current details of the playback state
         :rtype: requests.models.Response 
         """
-        return self.makeRequest('GET', '/me/player')
+        resp = self.makeRequest('GET', '/me/player')
+        return resp 
 
     def setPlaybackDevice(self, deviceId):
         """Sets the active playback device to the input device ID

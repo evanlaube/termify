@@ -72,18 +72,21 @@ class SpotifyAppController:
     def playbackControls(self):
         main = self.uiManager.getMenuByName('main')
         self._mainPanel.loadMenu(main)
+        self.uiManager.selectPanel(self._mainPanel)
 
     def selectPlaybackDevice(self):
         """Create a new menu to select which playback device to use"""
         selectMenu = PlaybackDeviceSelector(self)
         self.uiManager.addMenu(selectMenu)
         self._mainPanel.loadMenu(selectMenu)
+        self.uiManager.selectPanel(self._mainPanel)
 
     def selectPlaylist(self):
         """Create a new menu to select which of the user's saved playlists to play"""
         playlistMenu = PlaylistSelector(self)
         self.uiManager.addMenu(playlistMenu)
         self._mainPanel.loadMenu(playlistMenu)
+        self.uiManager.selectPanel(self._mainPanel)
 
     def displayError(self, errorMessage, maxWidth=80, returnMenu=None):
         """ Display an error dialog to the user
@@ -96,5 +99,6 @@ class SpotifyAppController:
         """
         errorMenu = ErrorMenu(self, errorMessage, maxWidth=maxWidth, returnMenu=returnMenu)
         self.uiManager.addMenu(errorMenu)
-        self.uiManager._rootPanel.loadMenu(errorMenu)
+        self._mainPanel.loadMenu(errorMenu)
+        self.uiManager.selectPanel(self._mainPanel)
 

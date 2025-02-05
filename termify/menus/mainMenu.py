@@ -3,6 +3,7 @@ from math import floor
 from procyon import Button, Label, Menu, ProgressBar, RowBar, colors
 
 from termify import __version__
+from termify.playbackMonitor import PlaybackMonitor
 
 class MainMenu(Menu):
     """ The main menu that displays plackback controls and information, as well
@@ -12,11 +13,16 @@ class MainMenu(Menu):
     """
     def __init__(self, controller):
         self.controller = controller
-        self.monitor = controller.getMonitor()
+        self.monitor : PlaybackMonitor = controller.getMonitor()
         self.api = controller.getApi()
+
+        # Keep track of if a song is playing to fix mismatch when starting spotify after temify
+        self._songPlaying = False
+
         super().__init__('main')
         self._desiredVolume = self.monitor.getCurrentVolume()
         self._buildMenu()
+
     
     def _playPauseToggle(self):
         """Toggle playback between play and pause
@@ -41,10 +47,11 @@ class MainMenu(Menu):
         :return: Label of playback toggle button - either 'Play' or 'Pause'
         :rtype: str
         """
-        state = self.api.getPlaybackState()
-    
-        if(state.status_code == 200 and state.json()['is_playing']):
+        state = self.monitor.getCurrentSong()
+
+        if(state is not None and state['is_playing']):
             return 'Pause'
+    
         return 'Play'
 
     def _getCurrentSongDisplayLabel(self):
@@ -55,7 +62,13 @@ class MainMenu(Menu):
         """
         currentSong = self.monitor.getCurrentSong()
         if currentSong == None or currentSong == {}:
+            self._songPlaying = False
             return "No media currently playing\n"
+        
+        if self._songPlaying == False:
+            # Set desired volume to current when loading context for first time
+            self._desiredVolume = self.monitor.getCurrentVolume()
+            self._songPlaying = True
 
         songTitle = currentSong['item']['name']
         album = currentSong['item']['album']['name']
@@ -142,7 +155,7 @@ class MainMenu(Menu):
         volumeRowBar = RowBar([volumeDownButton, volumeProgressBar, volumeUpButton], separator=' ')
         self.addElement('volumeRowBar', volumeRowBar)
 
-        playButton = Button(playButtonLabel, lambda: self._playPauseToggle(), setLabelToResult=True)
+        playButton = Button(playButtonLabel, lambda: self._playPauseToggle(), refreshFunction=self._getPlayButtonLabel, setLabelToResult=True)
         skipButton = Button('Skip Song', lambda: self.api.skip())
         prevButton = Button('Previous Song', lambda: self.api.prev())
         playbackBar = RowBar([playButton, skipButton, prevButton])

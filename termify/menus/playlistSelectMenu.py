@@ -20,7 +20,26 @@ class PlaylistSelector(Menu):
         :type uri: str
         """
         try:
+            currentSongData = self.monitor.getCurrentSong()
+
+            prevUri = None
+            try:
+                prevUri = currentSongData['context']['uri']
+                prevPlaylistId = prevUri.strip().split(':')[2]
+                # Set button label for last rowbar to 'Play' instead of 'Playing'
+                self.elements['playlist-' + prevPlaylistId].elements[1].label = "Play"
+            except:
+                # If unable to change button label, just reload all playlist rowbars
+                self.api.play(contextURI=uri)
+                self.elements = {}
+                self.buildMenu()
+                return
+
             self.api.play(contextURI=uri)
+            
+            newPlaylistId = uri.strip().split(':')[2]
+            self.elements['playlist-'+newPlaylistId].elements[1].label = 'Currently Playing'
+
         except:
             errorMsg = "No active streaming device found. Before using termify to control spotify, ensure that there is an active instance running on your account."
             self.controller.displayError(errorMsg, 80, self)
@@ -31,7 +50,8 @@ class PlaylistSelector(Menu):
         :param playlistJson: The data for the playist from the Spotify API
         :type param: dict
         :return: The RowBar element
-        :rtype: RowBar"""
+        :rtype: RowBar
+        """
 
         # Format name to be at least 40 characters - padded with spaces
         name = f"{playlistJson['name'] : <40}"
@@ -40,14 +60,11 @@ class PlaylistSelector(Menu):
         playButtonText = 'Play'
 
         currentSongData = self.monitor.getCurrentSong()
-        
-        try:
-            if currentSongData['context']['uri'] == uri:
-                playButtonText = 'Currently playing'
-        except:
-            #TODO: Clean up messy try/except
-            playButtonText = 'Play'
-    
+
+        if currentSongData is not None:
+            if currentSongData.get('context', {}).get('uri', {}) == uri:
+                playButtonText = 'Currently Playing'
+
         label = Label('\t' + name)
         playButton = Button(playButtonText, action=lambda: self._selectPlaylistButtonFunction(uri))
         bar = RowBar([label, playButton])

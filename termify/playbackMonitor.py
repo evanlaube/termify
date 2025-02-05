@@ -19,8 +19,14 @@ class PlaybackMonitor:
     def run(self):
         """Continuously check playback information"""
         while True:
-            song = self.api.getPlaybackState().json()
+            try:
+                song = self.api.getPlaybackState().json()
+            except:
+                time.sleep(self.updateInterval)
+                continue
+
             if song == None:
+                time.sleep(self.updateInterval)
                 continue
 
             with self.lock:
