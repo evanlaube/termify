@@ -52,7 +52,7 @@ class SpotifyAppController:
             menu = menuName
 
         if menu is not None:
-            self.uiManager._rootPanel.loadMenu(menu)
+            self._mainPanel.loadMenu(menu)
 
     def getMonitor(self) -> PlaybackMonitor:
         """ Returns the controller's playback monitor """
